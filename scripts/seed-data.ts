@@ -1,3 +1,4 @@
+import 'dotenv/config';
 import { createClient } from '@supabase/supabase-js'
 import fs from 'fs'
 import path from 'path'
@@ -8,8 +9,8 @@ const supabase = createClient(
 )
 
 async function seed() {
-  const creators = JSON.parse(fs.readFileSync(path.join(process.cwd(), 'creators.json'), 'utf8'))
-  const campaigns = JSON.parse(fs.readFileSync(path.join(process.cwd(), 'campaigns.json'), 'utf8'))
+  const creators = JSON.parse(fs.readFileSync(path.join(process.cwd(), 'data/creators.json'), 'utf8'))
+  const campaigns = JSON.parse(fs.readFileSync(path.join(process.cwd(), 'data/campaigns.json'), 'utf8'))
 
   console.log('Loading data...')
 
