@@ -4,7 +4,6 @@ import { useState } from "react";
 import MainHeader from "../components/MainHeader";
 import ChooseCampaingSection from "@/components/ChooseCampaingSection";
 import TopCreatorsContainer from "@/components/TopCreatorsContainer";
-import Loading from "@/components/Loading";
 import Modal from "@/components/modal/Modal";
 import BriefModalContent from "@/components/modal/BriefModalContent";
 
