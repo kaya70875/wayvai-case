@@ -29,7 +29,6 @@ export default function TopCreators({ data: topCreators, onGenerateBrief }: TopC
                             </div>
                         </div>
 
-                        {/* Explainable Scoring Logic (Progress Bars) */}
                         <div className="space-y-4 mb-6">
                             <div>
                                 <div className="flex justify-between text-xs font-medium text-slate-500 mb-1">
