@@ -1,6 +1,6 @@
-import React from 'react'
 import Loading from '../Loading';
 import Button from '../elements/Button';
+import ReactMarkdown from 'react-markdown';
 
 interface BriefModalContentProps {
     currentBrief: string;
@@ -19,7 +19,7 @@ export default function BriefModalContent({ currentBrief, briefLoading, onClose 
                     </div>
                 ) : (
                     <div className="whitespace-pre-wrap text-slate-700 leading-relaxed font-serif text-lg">
-                        {currentBrief}
+                        <ReactMarkdown>{currentBrief}</ReactMarkdown>
                     </div>
                 )}
             </div>
