@@ -1,5 +1,3 @@
-import React from 'react'
-
 export default function MainHeader() {
     return (
         <header className="mb-10 text-center">
