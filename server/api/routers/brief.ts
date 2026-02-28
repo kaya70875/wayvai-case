@@ -20,8 +20,11 @@ export const briefRouter = createTRPCRouter({
 
       if (existingBrief) return { brief: existingBrief.brief_content };
 
-      const { data: campaign } = await ctx.db.from("campaigns").select("*").eq("id", input.campaignId).single();
-      const { data: creator } = await ctx.db.from("creators").select("*").eq("id", input.creatorId).single();
+      const { data: campaign, error: campaignError } = await ctx.db.from("campaigns").select("*").eq("id", input.campaignId).single();
+      const { data: creator, error: creatorError } = await ctx.db.from("creators").select("*").eq("id", input.creatorId).single();
+      
+      if (campaignError) console.error(campaignError);
+      if (creatorError) console.error(creatorError);
 
       if (!campaign || !creator) throw new Error("Couldn't found necessary fields.");
 
