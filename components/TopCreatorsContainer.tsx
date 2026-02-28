@@ -1,5 +1,4 @@
 import { trpc } from '@/utils/trpc';
-import { useState } from 'react';
 import TopCreators from './TopCreators';
 import Loading from './Loading';
 
@@ -19,9 +18,13 @@ export default function TopCreatorsContainer({ selectedCampaignId, setCurrentBri
     const generateBriefMutation = trpc.brief.generateBrief.useMutation({
         onSuccess: (data) => {
             setCurrentBrief(data.brief);
+            setIsBriefLoading(false);
+
         },
         onError: (err) => {
             alert("Error while generating AI brief. " + err.message);
+            setIsBriefLoading(false);
+
         }
     });
 
@@ -29,14 +32,16 @@ export default function TopCreatorsContainer({ selectedCampaignId, setCurrentBri
         if (!selectedCampaignId) return;
         setIsModalOpen(true);
         setCurrentBrief("");
-        setIsBriefLoading(generateBriefMutation.isPending);
+        setIsBriefLoading(true);
 
-        generateBriefMutation.mutate({
-            campaignId: selectedCampaignId,
-            creatorId: creatorId,
-        });
-
-        setIsBriefLoading(generateBriefMutation.isPending);
+        try {
+            generateBriefMutation.mutate({
+                campaignId: selectedCampaignId,
+                creatorId: creatorId,
+            });
+        } catch {
+            console.error('Error while generating brief.');
+        }
     };
 
     return (
