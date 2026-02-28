@@ -61,4 +61,10 @@ export const matchingRouter = createTRPCRouter({
         .sort((a, b) => b.totalScore - a.totalScore)
         .slice(0, 20);
     }),
+    
+  getAllCampaigns: publicProcedure.query(async ({ ctx }) => {
+    const { data, error } = await ctx.db.from("campaigns").select("id, brand, objective");
+    if (error) throw error;
+    return data;
+  }),
 });
