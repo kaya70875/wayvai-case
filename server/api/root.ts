@@ -1,5 +1,5 @@
 import { matchingRouter } from "./routers/matching";
-import { createTRPCRouter } from "./trpc";
+import { createTRPCRouter } from "./trcp";
 
 export const appRouter = createTRPCRouter({
   matching: matchingRouter,

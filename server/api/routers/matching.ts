@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { createTRPCRouter, publicProcedure } from "../../api/trpc";
+import { createTRPCRouter, publicProcedure } from "../trcp";
 
 export const matchingRouter = createTRPCRouter({
   getTopCreators: publicProcedure
