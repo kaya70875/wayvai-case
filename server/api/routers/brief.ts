@@ -20,8 +20,17 @@ export const briefRouter = createTRPCRouter({
 
       if (existingBrief) return { brief: existingBrief.brief_content };
 
-      const { data: campaign, error: campaignError } = await ctx.db.from("campaigns").select("*").eq("id", input.campaignId).single();
-      const { data: creator, error: creatorError } = await ctx.db.from("creators").select("*").eq("id", input.creatorId).single();
+      const { data: campaign, error: campaignError } = await ctx.db
+        .from("campaigns")
+        .select("brand, objective, tone, doNotUseWords")
+        .eq("id", input.campaignId)
+        .single();
+
+      const { data: creator, error: creatorError } = await ctx.db
+        .from("creators")
+        .select("username, niches, primaryHookType")
+        .eq("id", input.creatorId)
+        .single();
       
       if (campaignError) console.error(campaignError);
       if (creatorError) console.error(creatorError);
