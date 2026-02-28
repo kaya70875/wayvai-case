@@ -22,7 +22,7 @@ export default function TopCreators({ data: topCreators, onGenerateBrief }: TopC
     return (
         <section className='top-creators grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6'>
             {topCreators?.map((item: Creator) => (
-                <CreatorCard item={item} onGenerateBrief={onGenerateBrief} />
+                <CreatorCard key={item.creatorId} item={item} onGenerateBrief={onGenerateBrief} />
             ))}
         </section>
     )
