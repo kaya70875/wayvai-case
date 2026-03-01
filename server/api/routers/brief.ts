@@ -2,19 +2,12 @@ import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 import { createTRPCRouter, publicProcedure } from "../trcp";
 import OpenAI from "openai";
+import { BriefOutput, validateAIResponse } from "@/utils/brief-validation";
 
 const openai = new OpenAI({
   apiKey: process.env.DEEPSEEK_API_KEY!,
   baseURL: "https://api.deepseek.com",
 });
-
-const BriefOutputSchema = z.object({
-  outreachMessage: z.string(),
-  contentIdeas: z.array(z.string()).length(5),
-  hooks: z.array(z.string()).length(3),
-});
-
-type BriefOutput = z.infer<typeof BriefOutputSchema>;
 
 export const briefRouter = createTRPCRouter({
   generateBrief: publicProcedure
@@ -70,7 +63,7 @@ export const briefRouter = createTRPCRouter({
         }
         
         try {
-          return BriefOutputSchema.parse(JSON.parse(rawContent));
+          return validateAIResponse(rawContent);
         } catch (err) {
           if (!isRetry) {
             console.log("Malformed JSON, retrying...");
