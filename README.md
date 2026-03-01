@@ -103,3 +103,5 @@ npm run test
 - **Server-side vs. Database Logic:** Currently, the matching algorithm runs in the Node.js layer for flexibility. For production-scale data (1M+ creators), this would be migrated to **PostgreSQL Functions (RPC)** for better performance.
 - **Cache Invalidation:** The current cache is persistent. A production version would include invalidation logic based on campaign updates.
 - **UI/UX:** Focused on "Explainable AI" by showing the score breakdown to the user, ensuring transparency in why an influencer was recommended.
+- **Gender & Age Granularity:** Not only country-based, but also a sub-category scoring system that perfectly aligns demographic breakdowns (age and gender distribution) with the campaign objective.
+- **Dynamic Weighting System:** Instead of fixed weights, a dynamic weighting model can be designed based on the campaign objective (for example, increase the weighting of Engagement if it's "Sales" focused, increase the weighting of Watch Time if it's "Awareness" focused).
