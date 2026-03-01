@@ -90,6 +90,14 @@ Using **tRPC**, the entire application shares types from the database schema to 
 
 ---
 
+### Testing
+You can run vitest tests with:
+```bash
+npm run test
+```
+
+---
+
 ## Trade-offs & Future Optimizations
 
 - **Server-side vs. Database Logic:** Currently, the matching algorithm runs in the Node.js layer for flexibility. For production-scale data (1M+ creators), this would be migrated to **PostgreSQL Functions (RPC)** for better performance.
