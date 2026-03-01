@@ -1,17 +1,5 @@
+import { Creator } from "@/types/types";
 import CreatorCard from "./elements/CreatorCard";
-
-export interface Creator {
-    creatorId: any;
-    username: any;
-    totalScore: number;
-    scoreBreakdown: {
-        nicheMatch: number;
-        audienceCountryMatch: number;
-        engagementWeight: number;
-        hookMatch: number;
-        brandSafetyPenalty: number;
-    };
-}
 
 interface TopCreatorsProps {
     data: Creator[] | undefined;
