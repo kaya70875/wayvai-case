@@ -1,7 +1,7 @@
-import { Creator } from "../TopCreators"
+import { TopCreator } from "@/types/types";
 
 interface CreatorCardProps {
-    item: Creator;
+    item: TopCreator;
     onGenerateBrief: (creatorId: string) => void;
 }
 
@@ -33,12 +33,12 @@ export default function CreatorCard({ item, onGenerateBrief }: CreatorCardProps)
                     <div>
                         <div className="flex justify-between text-xs font-medium text-slate-500 mb-1">
                             <span>Target Group (Country)</span>
-                            <span>{item.scoreBreakdown.audienceCountryMatch}/20</span>
+                            <span>{item.scoreBreakdown.countryMatch}/20</span>
                         </div>
                         <div className="h-1.5 w-full bg-slate-100 rounded-full overflow-hidden">
                             <div
                                 className="h-full bg-blue-500 transition-all duration-500"
-                                style={{ width: `${(item.scoreBreakdown.audienceCountryMatch / 20) * 100}%` }}
+                                style={{ width: `${(item.scoreBreakdown.countryMatch / 20) * 100}%` }}
                             />
                         </div>
                     </div>
