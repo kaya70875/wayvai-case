@@ -1,21 +1,23 @@
 export interface Creator {
     creatorId: any;
     username: string;
-    country: string
+    totalScore: number;
     niches: string[];
-    followers: number;
-    engagementRate: number;
-    avgWatchTime: number;
-    contentStyle: string;
-    primaryHookType: string;
-    brandSafetyFlags: string[];
+    audience: {
+        topCountries: string[];
+    }
+}
+
+export interface TopCreator {
+    creatorId: any;
+    username: string;
     totalScore: number;
     scoreBreakdown: {
         nicheMatch: number;
-        audienceCountryMatch: number;
-        engagementWeight: number;
+        countryMatch: number;
+        engagement: number;
         hookMatch: number;
-        brandSafetyPenalty: number;
+        safetyPenalty: number;
     };
 }
 
