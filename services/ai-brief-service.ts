@@ -37,7 +37,7 @@ export async function generateBriefWithAI(
               Brand: ${campaign.brand}
               Creator: @${creator.username}
               Niche: ${creator.niches}
-              Audience: ${creator.country}
+              Audience: ${creator.audience}
               Keep concise.
               `
             }
