@@ -8,7 +8,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "db:seed": "npx ts-node --skip-project scripts/seed-data.ts"
+    "db:seed": "npx ts-node --skip-project scripts/seed-data.ts",
+    "test": "vitest run"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.98.0",
