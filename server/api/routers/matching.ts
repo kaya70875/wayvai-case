@@ -2,18 +2,37 @@ import { z } from "zod";
 import { createTRPCRouter, publicProcedure } from "../trcp";
 
 export const matchingRouter = createTRPCRouter({
-  getTopCreators: publicProcedure
+getTopCreators: publicProcedure
     .input(z.object({ campaignId: z.string() }))
     .query(async ({ ctx, input }) => {
-      const { data: campaign } = await ctx.db
+      const { data: campaign, error: campaignError } = await ctx.db
         .from("campaigns")
-        .select("*")
+        .select(`
+          niches,
+          targetCountry,
+          minAvgWatchTime,
+          preferredHookTypes
+        `)
         .eq("id", input.campaignId)
         .single();
 
-      const { data: creators } = await ctx.db.from("creators").select("*");
+      if (campaignError || !campaign) throw new Error("Campaign not found");
 
-      if (!campaign || !creators) throw new Error("Veri bulunamadı");
+      const { data: creators, error: creatorsError } = await ctx.db
+        .from("creators")
+        .select(`
+          id,
+          username,
+          niches,
+          audience,
+          engagementRate,
+          avgWatchTime,
+          primaryHookType,
+          brandSafetyFlags
+        `);
+
+      if (creatorsError || !creators)
+        throw new Error("Creators not found");
 
       const rankedCreators = creators.map((creator) => {
         let scoreBreakdown = {
@@ -24,30 +43,33 @@ export const matchingRouter = createTRPCRouter({
           brandSafetyPenalty: 0,
         };
 
-        // --- Niche Match (30 Points) ---
-        const commonNiches = creator.niches.filter((n: string) => 
+        const commonNiches = creator.niches.filter((n: string) =>
           campaign.niches.includes(n)
         );
         scoreBreakdown.nicheMatch = commonNiches.length > 0 ? 30 : 0;
 
-        // --- Country Match (20 Points) ---
-        const isCountryMatch = creator.audience?.topCountries?.includes(campaign.targetCountry);
+        const isCountryMatch =
+          creator.audience?.topCountries?.includes(campaign.targetCountry);
         scoreBreakdown.audienceCountryMatch = isCountryMatch ? 20 : 0;
 
-        // --- Engagement & Stats (25 Points) ---
-        if (creator.engagementRate > 0.05) scoreBreakdown.engagementWeight += 15;
-        if (creator.avgWatchTime >= campaign.minAvgWatchTime) scoreBreakdown.engagementWeight += 10;
+        if (creator.engagementRate > 0.05)
+          scoreBreakdown.engagementWeight += 15;
 
-        // --- Hook Match (10 Points) ---
-        const isHookPreferred = campaign.preferredHookTypes.includes(creator.primaryHookType);
+        if (creator.avgWatchTime >= campaign.minAvgWatchTime)
+          scoreBreakdown.engagementWeight += 10;
+
+        const isHookPreferred =
+          campaign.preferredHookTypes.includes(creator.primaryHookType);
         scoreBreakdown.hookMatch = isHookPreferred ? 10 : 0;
 
-        // --- Brand Safety (Ceza) ---
         if (creator.brandSafetyFlags?.length > 0) {
           scoreBreakdown.brandSafetyPenalty = -10;
         }
 
-        const totalScore = Object.values(scoreBreakdown).reduce((a, b) => a + b, 0);
+        const totalScore = Object.values(scoreBreakdown).reduce(
+          (a, b) => a + b,
+          0
+        );
 
         return {
           creatorId: creator.id,
