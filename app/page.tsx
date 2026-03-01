@@ -7,10 +7,16 @@ import TopCreatorsContainer from "@/components/TopCreatorsContainer";
 import Modal from "@/components/modal/Modal";
 import BriefModalContent from "@/components/modal/BriefModalContent";
 
+export interface BriefMessage {
+  outreachMessage: string;
+  contentIdeas: string[];
+  hooks: string[];
+}
+
 export default function MatchingPage() {
   const [selectedCampaignId, setSelectedCampaignId] = useState<string>("");
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [currentBrief, setCurrentBrief] = useState("");
+  const [currentBrief, setCurrentBrief] = useState<BriefMessage | null>(null);
   const [briefLoading, setBriefLoading] = useState(false);
 
   return (

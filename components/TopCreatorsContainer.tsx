@@ -1,10 +1,11 @@
 import { trpc } from '@/utils/trpc';
 import TopCreators from './TopCreators';
 import Loading from './Loading';
+import { BriefMessage } from '@/app/page';
 
 interface TopCreatorsContainerProps {
     selectedCampaignId: string;
-    setCurrentBrief: React.Dispatch<React.SetStateAction<string>>;
+    setCurrentBrief: React.Dispatch<React.SetStateAction<BriefMessage | null>>;
     setIsModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
     setIsBriefLoading: React.Dispatch<React.SetStateAction<boolean>>;
 }
@@ -17,7 +18,7 @@ export default function TopCreatorsContainer({ selectedCampaignId, setCurrentBri
 
     const generateBriefMutation = trpc.brief.generateBrief.useMutation({
         onSuccess: (data) => {
-            setCurrentBrief(data.brief);
+            setCurrentBrief(data);
             setIsBriefLoading(false);
 
         },
@@ -31,7 +32,7 @@ export default function TopCreatorsContainer({ selectedCampaignId, setCurrentBri
     const handleGenerateBrief = (creatorId: string) => {
         if (!selectedCampaignId) return;
         setIsModalOpen(true);
-        setCurrentBrief("");
+        setCurrentBrief(null);
         setIsBriefLoading(true);
 
         try {
