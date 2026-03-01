@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { createTRPCRouter, publicProcedure } from "../trcp";
+import { calculateScore } from "@/utils/scoring";
 
 export const matchingRouter = createTRPCRouter({
 getTopCreators: publicProcedure
@@ -35,41 +36,7 @@ getTopCreators: publicProcedure
         throw new Error("Creators not found");
 
       const rankedCreators = creators.map((creator) => {
-        let scoreBreakdown = {
-          nicheMatch: 0,
-          audienceCountryMatch: 0,
-          engagementWeight: 0,
-          hookMatch: 0,
-          brandSafetyPenalty: 0,
-        };
-
-        const commonNiches = creator.niches.filter((n: string) =>
-          campaign.niches.includes(n)
-        );
-        scoreBreakdown.nicheMatch = commonNiches.length > 0 ? 30 : 0;
-
-        const isCountryMatch =
-          creator.audience?.topCountries?.includes(campaign.targetCountry);
-        scoreBreakdown.audienceCountryMatch = isCountryMatch ? 20 : 0;
-
-        if (creator.engagementRate > 0.05)
-          scoreBreakdown.engagementWeight += 15;
-
-        if (creator.avgWatchTime >= campaign.minAvgWatchTime)
-          scoreBreakdown.engagementWeight += 10;
-
-        const isHookPreferred =
-          campaign.preferredHookTypes.includes(creator.primaryHookType);
-        scoreBreakdown.hookMatch = isHookPreferred ? 10 : 0;
-
-        if (creator.brandSafetyFlags?.length > 0) {
-          scoreBreakdown.brandSafetyPenalty = -10;
-        }
-
-        const totalScore = Object.values(scoreBreakdown).reduce(
-          (a, b) => a + b,
-          0
-        );
+        const {totalScore, breakdown: scoreBreakdown} = calculateScore({campaign, creator})
 
         return {
           creatorId: creator.id,
