@@ -1,36 +1,97 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Wayv AI: Influencer Matching & Briefing System
+
+This project is a high-performance **Full-stack MVP** designed to match brands with the most relevant influencers using a weighted scoring algorithm and generate structured, AI-powered collaboration briefs.
+
+## Tech Stack
+
+- **Framework:** Next.js 14 (App Router)
+- **API Layer:** tRPC (End-to-end typesafety)
+- **Database & Auth:** Supabase (PostgreSQL)
+- **AI Engine:** DeepSeek AI (via OpenAI SDK)
+- **Validation:** Zod (Schema validation & AI output verification)
+- **Styling:** Tailwind CSS
+
+---
+
+## Scoring Logic (Algorithm)
+
+The system uses a **Weighted Multi-Criteria Decision Making** model. Each influencer is evaluated out of 100 points based on campaign requirements:
+
+$$Total Score = \sum (Niche_{30} + Audience_{20} + Engagement_{15} + WatchTime_{10} + Hook_{10}) - Penalty_{10}$$
+
+- **Niche Match (30pt):** Relevance between campaign categories and influencer content.
+- **Audience Country (20pt):** Geographical alignment of the influencer's top audience.
+- **Performance (25pt):** Combined score of Engagement Rate (>5%) and Average Watch Time.
+- **Hook Match (10pt):** Alignment of the influencer's primary content style with campaign goals.
+- **Brand Safety (-10pt):** Deduction for any automated safety flags.
+
+---
+
+## Key Features & Engineering Decisions
+
+### 1. AI Briefing Engine (JSON Mode)
+Unlike standard text generation, this system forces the AI to output **Strict JSON**. 
+- **Validation:** Every AI response is validated against a Zod schema.
+- **Reliability:** Includes a **Retry/Repair** mechanism to handle malformed JSON responses.
+- **Output:** Generates a personalized message, 5 content ideas, and 3 high-conversion hooks.
+
+### 2. Intelligent Caching
+To minimize API costs and latency, the system implements a **Composite Caching** strategy:
+- Briefs are cached per `campaign_id` + `creator_id`.
+- Subsequent requests for the same pairing return instantly from the database without invoking the AI.
+
+### 3. Type-Safe Architecture
+Using **tRPC**, the entire application shares types from the database schema to the frontend components, preventing runtime errors and improving developer velocity.
+
+---
 
 ## Getting Started
 
-First, run the development server:
+### Prerequisites
+- Node.js 18+
+- Supabase Account
+- DeepSeek or OpenAI API Key
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+### Installation
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+1. **Clone the repo:**
+   ```bash
+   git clone https://github.com/your-username/wayv-ai-assignment.git
+   cd wayv-ai-assignment
+   ```
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+2. **Install dependencies:**
+   ```bash
+   npm install
+   ```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+3. **Environment Variables:**
+   Create a `.env` file in the root directory:
+   ```env
+   NEXT_PUBLIC_SUPABASE_URL=your_url
+   NEXT_PUBLIC_SUPABASE_ANON_KEY=your_key
+   SUPABASE_SERVICE_ROLE_KEY=your_service_key
+   DEEPSEEK_API_KEY=your_api_key
+   ```
 
-## Learn More
+4. **Database Setup:**
+   Run the SQL provided in the `scripts/seed.sql` file in your Supabase SQL Editor.
 
-To learn more about Next.js, take a look at the following resources:
+5. **Seeding**
+   Seed your database with command:
+   ```bash
+   npm run db:seed
+   ```
+   
+7. **Run the app:**
+   ```bash
+   npm run dev
+   ```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+---
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Trade-offs & Future Optimizations
 
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- **Server-side vs. Database Logic:** Currently, the matching algorithm runs in the Node.js layer for flexibility. For production-scale data (1M+ creators), this would be migrated to **PostgreSQL Functions (RPC)** for better performance.
+- **Cache Invalidation:** The current cache is persistent. A production version would include invalidation logic based on campaign updates.
+- **UI/UX:** Focused on "Explainable AI" by showing the score breakdown to the user, ensuring transparency in why an influencer was recommended.
